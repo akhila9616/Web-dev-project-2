@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tic Tac Toe</title>
+
+<style>
+   :root {
+  --cell-size: 100px;
+  --bg-gradient: linear-gradient(135deg, #667eea, #764ba2);
+  --x-color: #ff6b6b;
+  --o-color: #4dabf7;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+
+.start-screen {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.start-card {
+  background: rgba(255,255,255,0.95);
+  padding: 50px 60px;
+  border-radius: 24px;
+  text-align: center;
+  width: 440px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  animation: fadeIn 0.8s ease;
+}
+
+.start-card h1 {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  background: linear-gradient(90deg, #5c7cfa, #7048e8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+ .start-card p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.start-btn {
+  padding: 14px 40px;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #5c7cfa, #4dabf7);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.35);
+}
+
+.start-btn:active {
+  transform: scale(0.96);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+  .game-screen {
+  display: none;
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  padding: 30px;
+}
+
+.wrapper {
+  display: flex;
+  gap: 20px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.game-section {
+  flex: 3;
+  background: #fff;
+  padding: 25px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  text-align: center;
+}
+
+.leaderboard-section {
+  flex: 1;
+  background: #fff;
+  padding: 15px;
+  border-radius: 18px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+}
+
+.players {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.players input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+#game {
+  display: grid;
+  grid-template-columns: repeat(3, var(--cell-size));
+  gap: 8px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+
+   .cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: rgba(255,255,255,0.85);
+  border-radius: 14px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.cell:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 22px rgba(0,0,0,0.25);
+}
+
+   .cell:active {
+  transform: scale(0.96);
+}
+
+   .cell.x {
+  color: var(--x-color);
+  text-shadow: 0 0 10px rgba(255,107,107,0.7);
+}
+
+ .cell.o {
+  color: var(--o-color);
+    text-shadow: 0 0 10px rgba(77,171,247,0.7);
+}
+
+/* ================= STATUS & BUTTON ================= */
+#status {
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+  button {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #5c7cfa;
+  color: white;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button:hover {
+  background: #4c6ef5;
+}
+
+
+h3 {
+  margin: 5px 0 10px;
+  text-align: center;
+}
+
+#leaderboard {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#leaderboard li {
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+}
+
+  .gold {
+  background: linear-gradient(135deg, #ffd700, #ffec8b);
+}
+
+.silver {
+  background: linear-gradient(135deg, #cfd9df, #e2ebf0);
+}
+
+.bronze {
+  background: linear-gradient(135deg, #d1913c, #ffd194);
+}
+</style>
+</head>
+
+<body>
+
+<div class="start-screen" id="startScreen">
+  <div class="start-card">
+    <h1>Tic Tac Toe</h1>
+    <p>Every move matters.</p>
+    <button class="start-btn" onclick="startGame()">Start Game</button>
+  </div>
+</div>
+
+
+<div class="game-screen" id="gameScreen">
+        <div class="wrapper">
+
+         <div class="game-section">
+      <h2>Tic Tac Toe</h2>
+
+      <div class="players">
+        <input id="playerX" placeholder="Player X name">
+        <input id="playerO" placeholder="Player O name">
+      </div>
+
+      <div id="game">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+
+      <p id="status"></p>
+      <button onclick="resetGame()">Restart Game</button>
+    </div>
+
+    <div class="leaderboard-section">
+      <h3>🏆 Top 5</h3>
+      <ul id="leaderboard"></ul>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const startScreen = document.getElementById("startScreen");
+const gameScreen = document.getElementById("gameScreen");
+const cells = document.querySelectorAll(".cell");
+const statusText = document.getElementById("status");
+  const playerXInput = document.getElementById("playerX");
+const playerOInput = document.getElementById("playerO");
+ const leaderboardEl = document.getElementById("leaderboard");
+
+ let currentPlayer = "X";
+let board = Array(9).fill("");
+ let gameActive = true;
+
+playerXInput.value = localStorage.getItem("playerX") || "";
+playerOInput.value = localStorage.getItem("playerO") || "";
+
+   let leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || {};
+
+const winPatterns = [
+  [0,1,2],[3,4,5],[6,7,8],
+  [0,3,6],[1,4,7],[2,5,8],
+  [0,4,8],[2,4,6]
+];
+
+function startGame() {
+  startScreen.style.display = "none";
+  gameScreen.style.display = "block";
+  updateStatus();
+  renderLeaderboard();
+}
+
+[playerXInput, playerOInput].forEach(input => {
+  input.addEventListener("input", () => {
+    localStorage.setItem("playerX", playerXInput.value);
+    localStorage.setItem("playerO", playerOInput.value);
+    updateStatus();
+  });
+});
+
+cells.forEach(cell => cell.addEventListener("click", handleClick));
+
+function getPlayerName() {
+  return currentPlayer === "X"
+    ? playerXInput.value || "Player X"
+    : playerOInput.value || "Player O";
+}
+
+function updateStatus() {
+  statusText.textContent = `${getPlayerName()}'s turn`;
+}
+
+function handleClick() {
+  const i = this.dataset.index;
+  if (board[i] || !gameActive) return;
+
+  board[i] = currentPlayer;
+  this.textContent = currentPlayer;
+  this.classList.add(currentPlayer.toLowerCase());
+
+  checkResult();
+}
+
+function checkResult() {
+  for (let [a,b,c] of winPatterns) {
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      const winner = getPlayerName();
+      statusText.textContent = `${winner} wins 🎉`;
+      leaderboard[winner] = (leaderboard[winner] || 0) + 1;
+      localStorage.setItem("leaderboard", JSON.stringify(leaderboard));
+      renderLeaderboard();
+    gameActive = false;
+      return;
+    }
+  }
+
+  if (!board.includes("")) {
+    statusText.textContent = "It's a draw 🤝";
+    gameActive = false;
+    return;
+   }
+
+   currentPlayer = currentPlayer === "X" ? "O" : "X";
+  updateStatus();
+ }
+
+  function resetGame() {
+  board.fill("");
+  cells.forEach(c => {
+    c.textContent = "";
+    c.classList.remove("x","o");
+  });
+   currentPlayer = "X";
+    gameActive = true;
+    updateStatus();
+}
+
+function renderLeaderboard() {
+  leaderboardEl.innerHTML = "";
+
+  Object.entries(leaderboard)
+      .sort((a,b) => b[1] - a[1])
+     .slice(0,5)
+    .forEach(([name, wins], index) => {
+        const li = document.createElement("li");
+    if (index === 0) li.classList.add("gold");
+       else if (index === 1) li.classList.add("silver");
+       else if (index === 2) li.classList.add("bronze");
+
+      li.innerHTML = `<span>${index+1}. ${name}</span><span>${wins}</span>`;
+        leaderboardEl.appendChild(li);
+    });
+}
+</script>
+
+</body>
+</html>
